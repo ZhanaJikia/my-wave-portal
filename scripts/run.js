@@ -1,19 +1,25 @@
 const main = async () => {
-    const [owner, randomPerson] = await hre.ethers.getSigners();
-
     const waveContractFactory = await hre.ethers.getContractFactory("WavePortal"); // Hardhat Runtime Environment
     const waveContract = await waveContractFactory.deploy();
     await waveContract.deployed();
-
-    console.log("Contract deployed to:", waveContract.address);
-    console.log("Contract deployed by:", owner.address);
+    console.log("Contract addy:", waveContract.address);
 
     let wavesCount;
     wavesCount = await waveContract.getTotalWaves();
-    let wave = await waveContract.connect(randomPerson).wave();
+    console.log(wavesCount.toNumber());
+
+
+    let wave = await waveContract.wave("A message!");
     await wave.wait();
-    wavesCount = await waveContract.getTotalWaves();
+
+    const [_randomPerson] = await hre.ethers.getSigners();
+    wave = await waveContract.connect(_randomPerson).wave("Another message")
+    await wave.wait();
+
+    let allWaves = await waveContract.getAllWaves();
+    console.log(allWaves);
   };
+
 
   const runMain = async () => {
     try {
